@@ -1,0 +1,10 @@
+FROM openjdk:8-jdk-alpine as build
+COPY . /usr/src/app
+WORKDIR /usr/src/app 
+RUN ./gradlew build
+
+FROM tomee:8-jre-8.0.0-M1-plume
+COPY src/main/tomee/run_tomee.sh /usr/local/
+COPY src/main/tomee/config/server.xml /usr/local/tomee/conf/
+COPY --from=0 /usr/src/app/build/libs/heroku-javaee-starter.war /usr/local/tomee/webapps/
+CMD /usr/local/run_tomee.sh

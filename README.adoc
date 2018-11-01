@@ -1,0 +1,31 @@
+= Deploying a Java EE 8 Application on Heroku
+
+This is a simple playground-project to experiment with Java EE 8 on link:[Heroku].
+The application can be either deploy on TomEE or OpenLiberty.
+You can read the details link:http://dplatz.de[on my blog].
+
+== Usage
+
+=== Payara
+
+----
+$ cd cars
+$ ./gradlew build
+$ docker-compose -f docker-compose.payara.yml up
+----
+
+=== Wildfly
+
+To run this on Wildfly, edit link:https://github.com/38leinaD/jee-samples/blob/master/datasource-definition/cars/src/main/java/de/dplatz/cars/business/entity/DatasourceProducer.java[DatasourceProducer.java]. You need to comment in the annotation for Wildfly. And comment out the annotation for Payara. 
+
+----
+$ cd cars
+$ ./gradlew build
+$ docker-compose -f docker-compose.wildfly.yml up
+----
+
+In a different shell you can now fire a request if the application is working and accessing the database.
+
+----
+$ curl -i -X POST -d '{"model": "tesla"}' -H "Content-Type: application/json" http://localhost:8080/cars/resources/cars
+----

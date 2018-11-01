@@ -1,0 +1,39 @@
+apply plugin: 'war'
+apply plugin: 'maven'
+apply plugin: 'eclipse-wtp'
+
+group = 'jz'
+version = '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    providedCompile 'javax:javaee-api:8.0'
+    //providedCompile 'org.eclipse.microprofile:microprofile:1.3'
+    //compile 'org.primefaces:primefaces:6.2'
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:2.10.0'
+}
+
+test {
+    // Only run unit-tests. E.g. don't run integration-tests with suffix 'IT'
+    include '**/*Test.class'
+}
+
+war {
+	archiveName 'heroku-javaee-starter.war'
+}
+
+task deployWar(type: Copy, dependsOn: 'war') {
+    group 'build'
+    description 'Copy the artifact to $DEPLOY_TO'
+    dependsOn 'build'
+    from war.archivePath
+    into "${System.env.DEPLOY_TO}"
+}

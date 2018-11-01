@@ -1,0 +1,8 @@
+FROM openjdk:8-jdk-alpine as build
+COPY . /usr/src/app
+WORKDIR /usr/src/app 
+RUN ./gradlew build
+
+FROM openliberty/open-liberty:javaee8
+COPY src/main/liberty/config/server.xml /config/
+COPY --from=0 /usr/src/app/build/libs/heroku-javaee-starter.war /config/dropins/

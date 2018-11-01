@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Heroku Java EE Starter Application</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    	body {
+    		font-family: sans-serif;
+    	} 
+		.unkown {
+			background-color: lightyellow;
+		}
+		.up {
+			background-color: lightgreen;
+		}
+		.down {
+			background-color: lightred;
+		}
+		
+		thead {
+			font-weight: bold;
+		}
+		tr:nth-child(odd) {background: #add8e666;}
+
+		
+    </style>
+</head>
+
+<body>
+    <header>
+        <h2>Heroku Java EE Starter Application</h2>
+    </header>
+    <main>
+        <div id="status"></div>
+        <hr/>
+        <h3>Environment Entries</h3>
+        <table>
+        	<thead>
+        		<tr>
+        			<td>Key</td>
+        			<td>Value</td>
+        		</tr>
+        	</thead>
+        	<tbody id="envEntriesTableBody"></tbody>
+        </table>
+    </main>
+    <script>
+   	const statusDiv = document.querySelector("#status");
+	const envEntriesTableBody = document.querySelector("#envEntriesTableBody");
+	
+	function setState(state) {
+		statusDiv.classList.remove("up");
+		statusDiv.classList.remove("down");
+		statusDiv.classList.remove("unkown");
+		if (state == "up") {
+			statusDiv.classList.add("up");
+		}
+		else if (state == "down") {
+			statusDiv.classList.add("down");
+		}
+		else {
+			statusDiv.classList.add("unkown");
+		}
+		statusDiv.innerText = `The application-state is ${state}.`;
+	}
+
+	function setEnvEntries(envEntries) {
+		for (let key of Object.getOwnPropertyNames(envEntries)) {
+			const value = envEntries[key];
+			const row = `
+				<tr>
+					<td>${key}</td>
+					<td>${value}</td>
+				</tr>`;
+
+			//const node = document.createRange().createContextualFragment(row);
+				
+			envEntriesTableBody.innerHTML += row;
+		}
+	}
+	
+   	
+   	async function main() {
+		let response = await fetch("resources/env");
+		if (status != "200") {
+			setState('up');
+		}
+		else {
+			setState('down');
+		}
+
+		const envEntries = await response.json();
+		setEnvEntries(envEntries);
+    }
+
+   	setState('unknown');
+    main();
+		
+    </script>
+</body>
+
+</html>
